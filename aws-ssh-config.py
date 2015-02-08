@@ -7,8 +7,8 @@ import boto.ec2
 AMIS_TO_USER = {
 	'amzn' : 'ec2-user',
 	'ubuntu' : 'ubuntu',
+	'CentOS' : 'root'
 	'DataStax' : 'ubuntu',
-	'replayer' : 'ec2-user'
 }
 
 BLACKLISTED_REGIONS = [
