@@ -12,6 +12,7 @@ There are a few similar scripts around but I couldn't find one that would satisf
 - Support public/private IP addresses (for VPNs and VPCs)
 - Support multiple instances with same tags (e.g. autoscaling groups) and provide an incremental count for duplicates based on instance launch time
 - Support multiple customizable tags concatenations in a user-provided order
+- Properly leverage tab completion
 
 Usage
 ---
