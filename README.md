@@ -17,7 +17,7 @@ There are a few similar scripts around but I couldn't find one that would satisf
 Usage
 ---
 
-This assumes boto is installed and configured.
+This assumes boto is installed and configured. Also, private ssh keys must be copied under `~/.ssh/`
 
 Supported arguments:
 
@@ -127,7 +127,7 @@ Host worker-prod-2
 
 ```
 
-By default, the SSH user is calculated from a regular expression based on the AMI name. If no matches are found, a warning is printed on standard error and one can edit the script and add the rule to the `AMIS_TO_USER` dictionary:
+By default, the ssh user is calculated from a regular expression based on the AMI name. If no matches are found, a warning is printed on standard error and one can edit the script and add the rule to the `AMIS_TO_USER` dictionary:
 
 ```
 gianluca@sid:~$ python aws-ssh-config.py > ~/.ssh/config
