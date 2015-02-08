@@ -7,7 +7,7 @@ import boto.ec2
 AMIS_TO_USER = {
 	'amzn' : 'ec2-user',
 	'ubuntu' : 'ubuntu',
-	'CentOS' : 'root'
+	'CentOS' : 'root',
 	'DataStax' : 'ubuntu',
 }
 
