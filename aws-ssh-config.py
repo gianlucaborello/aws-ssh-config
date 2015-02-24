@@ -9,6 +9,7 @@ AMIS_TO_USER = {
 	'ubuntu' : 'ubuntu',
 	'CentOS' : 'root',
 	'DataStax' : 'ubuntu',
+	'CoreOS' : 'core'
 }
 
 BLACKLISTED_REGIONS = [
