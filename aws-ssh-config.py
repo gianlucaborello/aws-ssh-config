@@ -18,7 +18,7 @@ BLACKLISTED_REGIONS = [
 ]
 
 
-def generate_id(instance, tags_filter):
+def generate_id(instance, tags_filter, region):
 	id = ''
 
 	if tags_filter is not None:
@@ -40,12 +40,16 @@ def generate_id(instance, tags_filter):
 	if not id:
 		id = instance.id
 
+	if region:
+		id += '-' + instance.placement
+
 	return id
 
 
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--tags', help='A comma-separated list of tag names to be considered for concatenation. If omitted, all tags will be used')
+	parser.add_argument('--region', action='store_true', help='Append the region name at the end of the concatenation')
 	parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
 	args = parser.parse_args()
 
@@ -67,7 +71,7 @@ def main():
 
 				instances[instance.launch_time].append(instance)
 
-				id = generate_id(instance, args.tags)
+				id = generate_id(instance, args.tags, args.region)
 
 				if id not in counts_total:
 					counts_total[id] = 0
@@ -98,7 +102,7 @@ def main():
 				if instance.ip_address:
 					ip = instance.ip_address
 
-			id = generate_id(instance, args.tags)
+			id = generate_id(instance, args.tags, args.region)
 
 			if counts_total[id] != 1:
 				counts_incremental[id] += 1
