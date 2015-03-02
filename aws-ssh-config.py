@@ -65,7 +65,7 @@ def main():
 		conn = boto.ec2.connect_to_region(region.name)
 
 		for instance in conn.get_only_instances():
-			if instance.state == 'running':
+			if instance.state == 'running' and not instance.platform == 'windows':
 				if instance.launch_time not in instances:
 					instances[instance.launch_time] = []
 
@@ -84,14 +84,15 @@ def main():
 
 					for ami, user in AMIS_TO_USER.iteritems():
 						regexp = re.compile(ami)
-						if regexp.match(image.name):
+						if image and regexp.match(image.name):
 							amis[instance.image_id] = user
 							break
 
-					if instance.image_id not in amis:
+					if image and instance.image_id not in amis:
 						amis[instance.image_id] = None
 						sys.stderr.write('Can\'t lookup user for AMI \'' + image.name + '\', add a rule to the script\n')
-
+					else:
+						amis[instance.image_id] = None
 
 	for k in sorted(instances):
 		for instance in instances[k]:
