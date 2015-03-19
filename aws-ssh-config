@@ -12,7 +12,7 @@ AMIS_TO_USER = {
     'CentOS': 'root',
     'DataStax': 'ubuntu',
     'CoreOS': 'core',
-    'DockerBase': 'ubutnu'
+    'DockerBase': 'ubuntu'
 }
 
 BLACKLISTED_REGIONS = [
