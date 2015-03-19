@@ -10,7 +10,7 @@ fi
 
 
 echo "Populating $tgt with AWS EC2 instances"
-./aws-ssh-config --tags "aws:cloudformation:stack-name,Name" | tee "$tgt"
+$ROOT/armada/aws-ssh-config/aws-ssh-config --tags "aws:cloudformation:stack-name,Name" | tee "$tgt"
 
 echo "Done."
 
