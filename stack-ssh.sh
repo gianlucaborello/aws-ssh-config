@@ -1,6 +1,12 @@
 #!/bin/bash
 
-export tgt=`stat -f "%N" ~/.ssh/config`
+
+if [[ "$OSTYPE" == linux* ]]; then
+	export tgt=$(readlink -f ~/.ssh/config)
+else
+	export tgt=$(stat -f "%N" ~/.ssh/config)
+fi
+
 if [ -e "$tgt" ]; then
 
     export backup="${tgt}_backup_`date +%s`"
