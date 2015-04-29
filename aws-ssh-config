@@ -5,6 +5,7 @@ import re
 import sys
 import boto.ec2
 
+UNKNOWN_AMI_USER = 'ubuntu'
 
 AMIS_TO_USER = {
     'amzn': 'ec2-user',
@@ -12,7 +13,7 @@ AMIS_TO_USER = {
     'CentOS': 'root',
     'DataStax': 'ubuntu',
     'CoreOS': 'core',
-    'DockerBase': 'ubuntu'
+    '.*': 'ubuntu'
 }
 
 BLACKLISTED_REGIONS = [
@@ -87,6 +88,9 @@ def main():
 
                 if not instance.image_id in amis:
                     image = conn.get_image(instance.image_id)
+                    if image is None:
+                        amis[instance.image_id] = UNKNOWN_AMI_USER
+                        continue
 
                     for ami, user in AMIS_TO_USER.iteritems():
                         regexp = re.compile(ami)
@@ -121,6 +125,7 @@ def main():
                 if amis[instance.image_id] is not None:
                     print '    User ' + amis[instance.image_id]
             except:
+                sys.stderr.write("Can't find user for host %s" % id)
                 pass
 
             print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
