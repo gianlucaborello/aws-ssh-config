@@ -53,6 +53,7 @@ def main():
 	parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
 	parser.add_argument('--profile', help='specify aws credential profile to use')
 	parser.add_argument('--user', help='override the ssh username for all hosts')
+	parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
 
 	args = parser.parse_args()
 
@@ -116,7 +117,7 @@ def main():
 				counts_incremental[id] += 1
 				id += '-' + str(counts_incremental[id])
 
-			print 'Host ' + id
+			print 'Host ' + args.prefix + id
 			print '    HostName ' + ip
 
 			try:
