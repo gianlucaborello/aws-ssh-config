@@ -51,7 +51,7 @@ def main():
 	parser.add_argument('--tags', help='A comma-separated list of tag names to be considered for concatenation. If omitted, all tags will be used')
 	parser.add_argument('--region', action='store_true', help='Append the region name at the end of the concatenation')
 	parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
-	parser.add_argument('--profile', action='store_true', help='specify aws credential profile to use')
+	parser.add_argument('--profile', help='specify aws credential profile to use')
 	args = parser.parse_args()
 
 	instances = {}
