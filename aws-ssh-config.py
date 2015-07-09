@@ -52,6 +52,8 @@ def main():
 	parser.add_argument('--region', action='store_true', help='Append the region name at the end of the concatenation')
 	parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
 	parser.add_argument('--profile', help='specify aws credential profile to use')
+	parser.add_argument('--user', help='override the ssh username for all hosts')
+
 	args = parser.parse_args()
 
 	instances = {}
@@ -82,18 +84,21 @@ def main():
 
 				counts_total[id] += 1
 
-				if not instance.image_id in amis:
-					image = conn.get_image(instance.image_id)
+                                if args.user:
+                                    amis[instance.image_id] = args.user
+                                else:
+                                    if not instance.image_id in amis:
+                                            image = conn.get_image(instance.image_id)
 
-					for ami, user in AMIS_TO_USER.iteritems():
-						regexp = re.compile(ami)
-						if image and regexp.match(image.name):
-							amis[instance.image_id] = user
-							break
+                                            for ami, user in AMIS_TO_USER.iteritems():
+                                                    regexp = re.compile(ami)
+                                                    if image and regexp.match(image.name):
+                                                            amis[instance.image_id] = user
+                                                            break
 
-					if image and instance.image_id not in amis:
-						amis[instance.image_id] = None
-						sys.stderr.write('Can\'t lookup user for AMI \'' + image.name + '\', add a rule to the script\n')
+                                            if image and instance.image_id not in amis:
+                                                    amis[instance.image_id] = None
+                                                    sys.stderr.write('Can\'t lookup user for AMI \'' + image.name + '\', add a rule to the script\n')
 
 
 	for k in sorted(instances):
