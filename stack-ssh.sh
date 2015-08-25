@@ -1,5 +1,6 @@
 #!/bin/bash
 
+touch ~/.ssh/config
 
 if [[ "$OSTYPE" == linux* ]]; then
 	export tgt=$(readlink -f ~/.ssh/config)
