@@ -152,10 +152,11 @@ Host worker-prod-2
 
 ```
 
-By default, the ssh user is calculated from a regular expression based on the AMI name. If no matches are found, a warning is printed on standard error and one can edit the script and add the rule to the `AMIS_TO_USER` dictionary:
+By default, the ssh user is calculated from a regular expression based on the AMI name. A default user can be set with `--default-user` to use if no matches are found, otherwise a warning is printed on standard error and one can edit the script and add the rule to the `AMIS_TO_USER` dictionary:
 
 ```
 gianluca@sid:~$ python aws-ssh-config.py > ~/.ssh/config
 Can't lookup user for AMI 'ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-20140926', add a rule to the script
 ```
 
+The `--user` param can also be used to use a single username for all hosts.
