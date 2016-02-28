@@ -53,6 +53,7 @@ def main():
 	parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
 	parser.add_argument('--profile', help='specify aws credential profile to use')
 	parser.add_argument('--user', help='override the ssh username for all hosts')
+	parser.add_argument('--default-user', help='default ssh username to use if we cannot detect from AMI name')
 	parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
 
 	args = parser.parse_args()
@@ -85,21 +86,22 @@ def main():
 
 				counts_total[id] += 1
 
-                                if args.user:
-                                    amis[instance.image_id] = args.user
-                                else:
-                                    if not instance.image_id in amis:
-                                            image = conn.get_image(instance.image_id)
+				if args.user:
+					amis[instance.image_id] = args.user
+				else:
+					if not instance.image_id in amis:
+						image = conn.get_image(instance.image_id)
 
-                                            for ami, user in AMIS_TO_USER.iteritems():
-                                                    regexp = re.compile(ami)
-                                                    if image and regexp.match(image.name):
-                                                            amis[instance.image_id] = user
-                                                            break
+						for ami, user in AMIS_TO_USER.iteritems():
+							regexp = re.compile(ami)
+							if image and regexp.match(image.name):
+								amis[instance.image_id] = user
+								break
 
-                                            if image and instance.image_id not in amis:
-                                                    amis[instance.image_id] = None
-                                                    sys.stderr.write('Can\'t lookup user for AMI \'' + image.name + '\', add a rule to the script\n')
+						if image and instance.image_id not in amis:
+							amis[instance.image_id] = args.default_user
+							if args.default_user is None:
+								sys.stderr.write('Can\'t lookup user for AMI \'' + image.name + '\', add a rule to the script\n')
 
 
 	for k in sorted(instances):
