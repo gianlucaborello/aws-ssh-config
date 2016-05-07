@@ -67,7 +67,7 @@ def main():
         if region.name in BLACKLISTED_REGIONS:
             continue
         if args.profile:
-            conn = boto.ec2.connect_to_region(region.name,profile_name=args.profile)
+            conn = boto.ec2.connect_to_region(region.name, profile_name=args.profile)
         else:
             conn = boto.ec2.connect_to_region(region.name)
 
