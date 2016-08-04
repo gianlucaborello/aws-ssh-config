@@ -106,10 +106,11 @@ def main():
                             amis[instance.image_id] = user
                             break
 
-                    if image and instance.image_id not in amis:
+                    if instance.image_id not in amis:
                         amis[instance.image_id] = args.default_user
                         if args.default_user is None:
-                            sys.stderr.write('Can\'t lookup user for AMI \'' + image.name + '\', add a rule to the script\n')
+                            image_label = image.name if image is not None else instance.image_id
+                            sys.stderr.write('Can\'t lookup user for AMI \'' + image_label + '\', add a rule to the script\n')
 
     for k in sorted(instances):
         for instance in instances[k]:
