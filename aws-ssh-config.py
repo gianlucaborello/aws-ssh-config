@@ -120,6 +120,11 @@ def main():
             else:
                 if instance.ip_address:
                     ip = instance.ip_address
+                elif instance.private_ip_address:
+                    ip = instance.private_ip_address
+                else:
+                    sys.stderr.write('Cannot lookup ip address for instance %s, skipped it.' % instance.id)
+                    continue
 
             id = generate_id(instance, args.tags, args.region)
 
