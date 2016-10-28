@@ -2,6 +2,7 @@ import argparse
 import re
 import sys
 import boto.ec2
+import os
 
 
 AMIS_TO_USER = {
@@ -17,6 +18,10 @@ BLACKLISTED_REGIONS = [
     'us-gov-west-1'
 ]
 
+
+def doesKeyFileExist(name, extension='pem'):
+    keyFile = os.path.expanduser("~") + '/.ssh/' + name + '.' + extension
+    return os.path.isfile(keyFile) and os.access(keyFile, os.R_OK)
 
 def generate_id(instance, tags_filter, region):
     id = ''
@@ -141,7 +146,8 @@ def main():
             except:
                 pass
 
-            print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
+            if doesKeyFileExist(instance.key_name):
+                print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
             print '    StrictHostKeyChecking no' # just for me, removing this is usually a good choice
             print
 
