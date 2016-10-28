@@ -55,6 +55,7 @@ def main():
     parser.add_argument('--user', help='override the ssh username for all hosts')
     parser.add_argument('--default-user', help='default ssh username to use if we cannot detect from AMI name')
     parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
+    parser.add_argument('--white-list-region', default='', help='Specify from the command line which reqion you explicitly want', nargs="+")
 
     args = parser.parse_args()
 
@@ -64,6 +65,8 @@ def main():
     amis = {}
 
     for region in boto.ec2.regions():
+        if args.white_list_region and region.name not in args.white_list_region:
+            continue
         if region.name in BLACKLISTED_REGIONS:
             continue
         if args.profile:
