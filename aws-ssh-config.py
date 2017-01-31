@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+
 import argparse
 import re
 import sys
 import boto.ec2
+import time
 
 
 AMIS_TO_USER = {
@@ -55,6 +58,7 @@ def main():
     parser.add_argument('--user', help='override the ssh username for all hosts')
     parser.add_argument('--default-user', help='default ssh username to use if we cannot detect from AMI name')
     parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
+    parser.add_argument('--keydir', default='~/.ssh/', help='location of private keys')
 
     args = parser.parse_args()
 
@@ -62,6 +66,11 @@ def main():
     counts_total = {}
     counts_incremental = {}
     amis = {}
+
+    print "# Generated on " + time.asctime(time.localtime(time.time()))
+    print "# " + " ".join(sys.argv)
+    print "# "
+    print
 
     for region in boto.ec2.regions():
         if region.name in BLACKLISTED_REGIONS:
@@ -132,7 +141,10 @@ def main():
                 counts_incremental[id] += 1
                 id += '-' + str(counts_incremental[id])
 
-            print 'Host ' + args.prefix + id
+            hostid = args.prefix + id
+            hostid = hostid.replace(' ', '_') # get rid of spaces
+
+            print 'Host ' + hostid
             print '    HostName ' + ip
 
             try:
@@ -141,7 +153,12 @@ def main():
             except:
                 pass
 
-            print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
+            if args.keydir:
+                keydir = args.keydir
+            else:
+                keydir = '~/.ssh/'
+
+            print '    IdentityFile ' + keydir + instance.key_name + '.pem'
             print '    StrictHostKeyChecking no' # just for me, removing this is usually a good choice
             print
 
