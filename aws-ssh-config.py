@@ -3,8 +3,8 @@
 import argparse
 import re
 import sys
-import boto.ec2
 import time
+import boto.ec2
 
 
 AMIS_TO_USER = {
@@ -22,31 +22,31 @@ BLACKLISTED_REGIONS = [
 
 
 def generate_id(instance, tags_filter, region):
-    id = ''
+    instance_id = ''
 
     if tags_filter is not None:
         for tag in tags_filter.split(','):
             value = instance.tags.get(tag, None)
             if value:
-                if not id:
-                    id = value
+                if not instance_id:
+                    instance_id = value
                 else:
-                    id += '-' + value
+                    instance_id += '-' + value
     else:
         for tag, value in instance.tags.iteritems():
             if not tag.startswith('aws'):
-                if not id:
-                    id = value
+                if not instance_id:
+                    instance_id = value
                 else:
-                    id += '-' + value
+                    instance_id += '-' + value
 
-    if not id:
-        id = instance.id
+    if not instance_id:
+        instance_id = instance.id
 
     if region:
-        id += '-' + instance.placement
+        instance_id += '-' + instance.placement
 
-    return id
+    return instance_id
 
 
 def main():
@@ -59,8 +59,8 @@ def main():
     parser.add_argument('--default-user', help='default ssh username to use if we cannot detect from AMI name')
     parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
     parser.add_argument('--keydir', default='~/.ssh/', help='location of private keys')
-    parser.add_argument('--no-identities-only', default=0, action='store_true', help='Do not include IdentitiesOnly=yes in ssh config; may cause connection refused if using ssh-agent')
-    parser.add_argument('--strict-hostkey-checking', default=0, action='store_true', help='Do not include StrictHostKeyChecking=no in ssh config')
+    parser.add_argument('--no-identities-only', action='store_true', help='Do not include IdentitiesOnly=yes in ssh config; may cause connection refused if using ssh-agent')
+    parser.add_argument('--strict-hostkey-checking', action='store_true', help='Do not include StrictHostKeyChecking=no in ssh config')
 
     args = parser.parse_args()
 
@@ -97,13 +97,13 @@ def main():
 
             instances[instance.launch_time].append(instance)
 
-            id = generate_id(instance, args.tags, args.region)
+            instance_id = generate_id(instance, args.tags, args.region)
 
-            if id not in counts_total:
-                counts_total[id] = 0
-                counts_incremental[id] = 0
+            if instance_id not in counts_total:
+                counts_total[instance_id] = 0
+                counts_incremental[instance_id] = 0
 
-            counts_total[id] += 1
+            counts_total[instance_id] += 1
 
             if args.user:
                 amis[instance.image_id] = args.user
@@ -127,27 +127,27 @@ def main():
         for instance in instances[k]:
             if args.private:
                 if instance.private_ip_address:
-                    ip = instance.private_ip_address
+                    ip_addr = instance.private_ip_address
             else:
                 if instance.ip_address:
-                    ip = instance.ip_address
+                    ip_addr = instance.ip_address
                 elif instance.private_ip_address:
-                    ip = instance.private_ip_address
+                    ip_addr = instance.private_ip_address
                 else:
                     sys.stderr.write('Cannot lookup ip address for instance %s, skipped it.' % instance.id)
                     continue
 
-            id = generate_id(instance, args.tags, args.region)
+            instance_id = generate_id(instance, args.tags, args.region)
 
-            if counts_total[id] != 1:
-                counts_incremental[id] += 1
-                id += '-' + str(counts_incremental[id])
+            if counts_total[instance_id] != 1:
+                counts_incremental[instance_id] += 1
+                instance_id += '-' + str(counts_incremental[instance_id])
 
-            hostid = args.prefix + id
+            hostid = args.prefix + instance_id
             hostid = hostid.replace(' ', '_') # get rid of spaces
 
             print 'Host ' + hostid
-            print '    HostName ' + ip
+            print '    HostName ' + ip_addr
 
             try:
                 if amis[instance.image_id] is not None:
