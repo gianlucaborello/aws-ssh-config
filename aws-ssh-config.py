@@ -59,6 +59,8 @@ def main():
     parser.add_argument('--default-user', help='default ssh username to use if we cannot detect from AMI name')
     parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
     parser.add_argument('--keydir', default='~/.ssh/', help='location of private keys')
+    parser.add_argument('--no-identities-only', default=0, action='store_true', help='Do not include IdentitiesOnly=yes in ssh config; may cause connection refused if using ssh-agent')
+    parser.add_argument('--strict-hostkey-checking', default=0, action='store_true', help='Do not include StrictHostKeyChecking=no in ssh config')
 
     args = parser.parse_args()
 
@@ -159,7 +161,10 @@ def main():
                 keydir = '~/.ssh/'
 
             print '    IdentityFile ' + keydir + instance.key_name + '.pem'
-            print '    StrictHostKeyChecking no' # just for me, removing this is usually a good choice
+            if not args.no_identities_only:
+                print '    IdentitiesOnly yes' # ensure ssh-agent keys don't flood when we know the right file to use
+            if not args.strict_hostkey_checking:
+                print '    StrictHostKeyChecking no' # just for me, removing this is usually a good choice
             print
 
 
