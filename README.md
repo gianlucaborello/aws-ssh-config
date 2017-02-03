@@ -23,15 +23,29 @@ This assumes boto is installed and configured. Also, private ssh keys must be co
 Supported arguments:
 
 ```
-gianluca@sid:~$ python aws-ssh-config.py --help
-usage: aws-ssh-config.py [-h] [--tags TAGS] [--private]
+usage: aws-ssh-config.py [-h] [--default-user DEFAULT_USER] [--keydir KEYDIR]
+                         [--no-identities-only] [--prefix PREFIX] [--private]
+                         [--profile PROFILE] [--region]
+                         [--strict-hostkey-checking] [--tags TAGS]
+                         [--user USER]
 
 optional arguments:
-  -h, --help   show this help message and exit
-  --tags TAGS  A comma-separated list of tag names to be considered for
-               concatenation. If omitted, all tags will be used
-  --region     Append the region name at the end of the concatenation
-  --private    Use private IP addresses (public are used by default)
+  -h, --help            show this help message and exit
+  --default-user DEFAULT_USER
+                        default ssh username to use if we cannot detect from
+                        AMI name
+  --keydir KEYDIR       location of private keys
+  --no-identities-only  Do not include IdentitiesOnly=yes in ssh config; may
+                        cause connection refused if using ssh-agent
+  --prefix PREFIX       specify a prefix to prepend to all host names
+  --private             Use private IP addresses (public are used by default)
+  --profile PROFILE     specify aws credential profile to use
+  --region              Append the region name at the end of the concatenation
+  --strict-hostkey-checking
+                        Do not include StrictHostKeyChecking=no in ssh config
+  --tags TAGS           A comma-separated list of tag names to be considered
+                        for concatenation. If omitted, all tags will be used
+  --user USER           override the ssh username for all hosts
 ```
 
 By default, it will name hosts by concatenating all tags:
@@ -43,24 +57,28 @@ Host dev-worker-1
     HostName 54.173.109.173
     User ec2-user
     IdentityFile ~/.ssh/dev.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host dev-worker-2
     HostName 54.173.190.141
     User ec2-user
     IdentityFile ~/.ssh/dev.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host prod-worker-1
     HostName 54.164.168.30
     User ec2-user
     IdentityFile ~/.ssh/prod.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host prod-worker-2
     HostName 54.174.115.242
     User ubuntu
     IdentityFile ~/.ssh/prod.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 ```
 
@@ -104,24 +122,28 @@ Host worker-1
     HostName 54.173.109.173
     User ec2-user
     IdentityFile ~/.ssh/dev.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host worker-2
     HostName 54.173.190.141
     User ec2-user
     IdentityFile ~/.ssh/dev.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host worker-3
     HostName 54.164.168.30
     User ec2-user
     IdentityFile ~/.ssh/prod.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host worker-4
     HostName 54.174.115.242
     User ubuntu
     IdentityFile ~/.ssh/prod.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 gianluca@sid:~$ python aws-ssh-config.py --tags Name,Infrastructure > ~/.ssh/config
@@ -130,24 +152,28 @@ Host worker-dev-1
     HostName 54.173.109.173
     User ec2-user
     IdentityFile ~/.ssh/dev.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host worker-dev-2
     HostName 54.173.190.141
     User ec2-user
     IdentityFile ~/.ssh/dev.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host worker-prod-1
     HostName 54.164.168.30
     User ec2-user
     IdentityFile ~/.ssh/prod.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 Host worker-prod-2
     HostName 54.174.115.242
     User ubuntu
     IdentityFile ~/.ssh/prod.pem
+    IdentitiesOnly yes
     StrictHostKeyChecking no
 
 ```

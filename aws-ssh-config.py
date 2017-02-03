@@ -51,16 +51,16 @@ def generate_id(instance, tags_filter, region):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tags', help='A comma-separated list of tag names to be considered for concatenation. If omitted, all tags will be used')
-    parser.add_argument('--region', action='store_true', help='Append the region name at the end of the concatenation')
-    parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
-    parser.add_argument('--profile', help='specify aws credential profile to use')
-    parser.add_argument('--user', help='override the ssh username for all hosts')
     parser.add_argument('--default-user', help='default ssh username to use if we cannot detect from AMI name')
-    parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
     parser.add_argument('--keydir', default='~/.ssh/', help='location of private keys')
     parser.add_argument('--no-identities-only', action='store_true', help='Do not include IdentitiesOnly=yes in ssh config; may cause connection refused if using ssh-agent')
+    parser.add_argument('--prefix', default='', help='specify a prefix to prepend to all host names')
+    parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
+    parser.add_argument('--profile', help='specify aws credential profile to use')
+    parser.add_argument('--region', action='store_true', help='Append the region name at the end of the concatenation')
     parser.add_argument('--strict-hostkey-checking', action='store_true', help='Do not include StrictHostKeyChecking=no in ssh config')
+    parser.add_argument('--tags', help='A comma-separated list of tag names to be considered for concatenation. If omitted, all tags will be used')
+    parser.add_argument('--user', help='override the ssh username for all hosts')
 
     args = parser.parse_args()
 
@@ -162,9 +162,10 @@ def main():
 
             print '    IdentityFile ' + keydir + instance.key_name + '.pem'
             if not args.no_identities_only:
-                print '    IdentitiesOnly yes' # ensure ssh-agent keys don't flood when we know the right file to use
+                # ensure ssh-agent keys don't flood when we know the right file to use
+                print '    IdentitiesOnly yes'
             if not args.strict_hostkey_checking:
-                print '    StrictHostKeyChecking no' # just for me, removing this is usually a good choice
+                print '    StrictHostKeyChecking no'
             print
 
 
