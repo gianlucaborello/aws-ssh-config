@@ -61,6 +61,7 @@ def main():
     parser.add_argument('--strict-hostkey-checking', action='store_true', help='Do not include StrictHostKeyChecking=no in ssh config')
     parser.add_argument('--tags', help='A comma-separated list of tag names to be considered for concatenation. If omitted, all tags will be used')
     parser.add_argument('--user', help='override the ssh username for all hosts')
+    parser.add_argument('--white-list-region', default='', help='Specify from the command line which reqion you explicitly want', nargs="+")
 
     args = parser.parse_args()
 
@@ -75,6 +76,8 @@ def main():
     print
 
     for region in boto.ec2.regions():
+        if args.white_list_region and region.name not in args.white_list_region:
+            continue
         if region.name in BLACKLISTED_REGIONS:
             continue
         if args.profile:
