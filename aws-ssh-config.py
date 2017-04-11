@@ -163,7 +163,7 @@ def main():
             else:
                 keydir = '~/.ssh/'
 
-            print '    IdentityFile ' + keydir + instance.key_name + '.pem'
+            print '    IdentityFile ' + keydir + instance.key_name.replace(' ', '_') + '.pem'
             if not args.no_identities_only:
                 # ensure ssh-agent keys don't flood when we know the right file to use
                 print '    IdentitiesOnly yes'
