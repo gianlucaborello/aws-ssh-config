@@ -165,7 +165,7 @@ def main():
                 keydir = '~/.ssh/'
 
             if args.ssh_key_name:
-                print '    IdentityFile ~/.ssh/' + keydir + args.ssh_key_name + '.pem'
+                print '    IdentityFile ' + keydir + args.ssh_key_name + '.pem'
             else:
                 print '    IdentityFile ' + keydir + instance.key_name.replace(' ', '_') + '.pem'
 
