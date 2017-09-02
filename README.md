@@ -42,6 +42,7 @@ optional arguments:
   --private             Use private IP addresses (public are used by default)
   --profile PROFILE     Specify AWS credential profile to use
   --region              Append the region name at the end of the concatenation
+  --ssh-key-name        Override the ssh key to use
   --strict-hostkey-checking
                         Do not include StrictHostKeyChecking=no in ssh config
   --tags TAGS           A comma-separated list of tag names to be considered
