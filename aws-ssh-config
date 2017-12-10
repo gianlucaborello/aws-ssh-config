@@ -58,7 +58,13 @@ def main():
                         help='Append the region name at the end of the concatenation')
     parser.add_argument('--private', action='store_true',
                         help='Use private IP addresses (public are used by default)')
+    parser.add_argument('--ssh-key', help='Personal SSH key that should be used for connection. Default=~/.ssh/optiprod.pem')
+    parser.add_argument('--ssh-user', help='Personal SSH user that should be used for connection. If you choose ssh-key you must also specify this argument.')
     args = parser.parse_args()
+
+    if (args.ssh_key and not args.ssh_user):
+       print "When you specify a personal ssh key please also define your ssh user!"
+       sys.exit(1)
 
     instances = {}
     counts_total = {}
@@ -122,13 +128,19 @@ def main():
             print '    HostName ' + ip
 
             try:
-                if amis[instance.image_id] is not None:
+                if args.ssh_user:
+                    print '    User ' + args.ssh_user
+                elif amis[instance.image_id] is not None:
                     print '    User ' + amis[instance.image_id]
             except:
                 sys.stderr.write("Can't find user for host %s" % id)
                 pass
 
-            print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
+            if args.ssh_key:
+                print '    IdentityFile %s' % args.ssh_key
+            else:
+                print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
+
             # just for me, removing this is usually a good choice
             print '    StrictHostKeyChecking no'
             print
