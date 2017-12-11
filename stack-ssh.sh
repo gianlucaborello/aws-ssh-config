@@ -19,6 +19,6 @@ fi
 [ ! -z "$STACK_SSH_USER" ] && ssh_user_arg="--ssh-user ${STACK_SSH_USER}"
 
 echo "Populating $tgt with AWS EC2 instances"
-aws-ssh-config --tags "aws:cloudformation:stack-name,sparta-role,Name" $ssh_user_arg $ssh_key_arg | tee "$tgt"
+$ROOT/aws-ssh-config/aws-ssh-config --tags "aws:cloudformation:stack-name,sparta-role,Name" $ssh_user_arg $ssh_key_arg | tee "$tgt"
 echo "Done."
 
