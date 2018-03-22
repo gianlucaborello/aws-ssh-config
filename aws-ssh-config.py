@@ -7,12 +7,20 @@ import time
 import boto.ec2
 
 
-AMIS_TO_USER = {
+AMI_NAMES_TO_USER = {
     'amzn' : 'ec2-user',
     'ubuntu' : 'ubuntu',
     'CentOS' : 'root',
     'DataStax' : 'ubuntu',
     'CoreOS' : 'core'
+}
+
+AMI_IDS_TO_USER = {
+    'ami-ada2b6c4' : 'ubuntu'
+}
+
+AMI_IDS_TO_KEY = {
+    'ami-ada2b6c4' : 'custom_key'
 }
 
 BLACKLISTED_REGIONS = [
@@ -69,7 +77,7 @@ def main():
     instances = {}
     counts_total = {}
     counts_incremental = {}
-    amis = {}
+    amis = AMI_IDS_TO_USER.copy()
 
     print "# Generated on " + time.asctime(time.localtime(time.time()))
     print "# " + " ".join(sys.argv)
@@ -115,7 +123,7 @@ def main():
                 if not instance.image_id in amis:
                     image = conn.get_image(instance.image_id)
 
-                    for ami, user in AMIS_TO_USER.iteritems():
+                    for ami, user in AMI_NAMES_TO_USER.iteritems():
                         regexp = re.compile(ami)
                         if image and regexp.match(image.name):
                             amis[instance.image_id] = user
@@ -167,7 +175,9 @@ def main():
             if args.ssh_key_name:
                 print '    IdentityFile ' + keydir + args.ssh_key_name + '.pem'
             else:
-                print '    IdentityFile ' + keydir + instance.key_name.replace(' ', '_') + '.pem'
+                key_name = AMI_IDS_TO_KEY.get(instance.image_id, instance.key_name)
+
+                print '    IdentityFile ' + keydir + key_name.replace(' ', '_') + '.pem'
 
             if not args.no_identities_only:
                 # ensure ssh-agent keys don't flood when we know the right file to use
