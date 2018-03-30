@@ -158,6 +158,8 @@ def main():
             hostid = args.prefix + instance_id
             hostid = hostid.replace(' ', '_') # get rid of spaces
 
+            if instance.id:
+                print '# id: ' + instance.id
             print 'Host ' + hostid
             print '    HostName ' + ip_addr
 
