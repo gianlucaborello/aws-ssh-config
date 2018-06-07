@@ -70,7 +70,7 @@ def main():
     parser.add_argument('--strict-hostkey-checking', action='store_true', help='Do not include StrictHostKeyChecking=no in ssh config')
     parser.add_argument('--tags', help='A comma-separated list of tag names to be considered for concatenation. If omitted, all tags will be used')
     parser.add_argument('--user', help='Override the ssh username for all hosts')
-    parser.add_argument('--white-list-region', default='', help='Which regions must be included. If omitted, all regions are considered', nargs="+")
+    parser.add_argument('--white-list-region', default='', help='Which regions must be included. If omitted, all regions are considered', nargs='+')
 
     args = parser.parse_args()
 
@@ -79,10 +79,10 @@ def main():
     counts_incremental = {}
     amis = AMI_IDS_TO_USER.copy()
 
-    print("# Generated on " + time.asctime(time.localtime(time.time())))
-    print("# " + " ".join(sys.argv))
-    print("# ")
-    print("")
+    print('# Generated on ' + time.asctime(time.localtime(time.time())))
+    print('# ' + ' '.join(sys.argv))
+    print('# ')
+    print('')
 
     for region in boto.ec2.regions():
         if args.white_list_region and region.name not in args.white_list_region:
