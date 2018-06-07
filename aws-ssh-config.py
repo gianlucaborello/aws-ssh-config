@@ -82,7 +82,7 @@ def main():
     print("# Generated on " + time.asctime(time.localtime(time.time())))
     print("# " + " ".join(sys.argv))
     print("# ")
-    print()
+    print("")
 
     for region in boto.ec2.regions():
         if args.white_list_region and region.name not in args.white_list_region:
@@ -186,7 +186,7 @@ def main():
                 print('    IdentitiesOnly yes')
             if not args.strict_hostkey_checking:
                 print('    StrictHostKeyChecking no')
-            print()
+            print('')
 
 
 if __name__ == '__main__':
