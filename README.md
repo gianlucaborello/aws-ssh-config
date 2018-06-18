@@ -15,6 +15,15 @@ There are a few similar scripts around but I couldn't find one that would satisf
 - Support region (with AZ) in the host name concatenation
 - Properly leverage tab completion
 
+Load modules
+---
+
+- Use `pip` to load the required modules
+
+```
+pip install -r requirements.txt
+```
+
 Usage
 ---
 
