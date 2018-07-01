@@ -21,7 +21,6 @@ BLACKLISTED_REGIONS = [
     'us-gov-west-1'
 ]
 
-
 def generate_id(instance, tags_filter, region):
     id = ''
 
@@ -50,6 +49,29 @@ def generate_id(instance, tags_filter, region):
     return id
 
 
+def sshconf_host_entry(id, ip, instance, args, amis):
+    print 'Host ' + id
+    print '    HostName ' + ip
+
+    try:
+        if args.ssh_user:
+            print '    User ' + args.ssh_user
+        elif amis[instance.image_id] is not None:
+            print '    User ' + amis[instance.image_id]
+    except:
+        sys.stderr.write("Can't find user for host %s" % id)
+        pass
+
+    if args.ssh_key:
+        print '    IdentityFile %s' % args.ssh_key
+    else:
+        print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
+
+    # just for me, removing this is usually a good choice
+    print '    StrictHostKeyChecking no'
+    print
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -57,7 +79,7 @@ def main():
     parser.add_argument('--region', action='store_true',
                         help='Append the region name at the end of the concatenation')
     parser.add_argument('--private', action='store_true',
-                        help='Use private IP addresses (public are used by default)')
+                        help='Also add a private IP addresses dns, prefixed with `-int` (public are used by default)')
     parser.add_argument('--ssh-key', help='Personal SSH key that should be used for connection. Default=~/.ssh/optiprod.pem')
     parser.add_argument('--ssh-user', help='Personal SSH user that should be used for connection. If you choose ssh-key you must also specify this argument.')
     args = parser.parse_args()
@@ -111,12 +133,8 @@ def main():
 
     for k in sorted(instances):
         for instance in instances[k]:
-            if args.private:
-                if instance.private_ip_address:
-                    ip = instance.private_ip_address
-            else:
-                if instance.ip_address:
-                    ip = instance.ip_address
+            if instance.ip_address:
+                ip = instance.ip_address
 
             id = generate_id(instance, args.tags, args.region)
 
@@ -124,26 +142,12 @@ def main():
                 counts_incremental[id] += 1
                 id += '-' + str(counts_incremental[id])
 
-            print 'Host ' + id
-            print '    HostName ' + ip
+            sshconf_host_entry(id, ip, instance, args, amis)
 
-            try:
-                if args.ssh_user:
-                    print '    User ' + args.ssh_user
-                elif amis[instance.image_id] is not None:
-                    print '    User ' + amis[instance.image_id]
-            except:
-                sys.stderr.write("Can't find user for host %s" % id)
-                pass
-
-            if args.ssh_key:
-                print '    IdentityFile %s' % args.ssh_key
-            else:
-                print '    IdentityFile ~/.ssh/' + instance.key_name + '.pem'
-
-            # just for me, removing this is usually a good choice
-            print '    StrictHostKeyChecking no'
-            print
+            if args.private:
+                if instance.private_ip_address:
+                    priv_ip = instance.private_ip_address
+                    sshconf_host_entry(id + '-int', priv_ip, instance, args, amis)
 
 
 if __name__ == '__main__':
