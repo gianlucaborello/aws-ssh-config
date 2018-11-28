@@ -4,7 +4,7 @@ aws-ssh-config
 Description
 ---
 
-A very simple script that queries the AWS EC2 API with boto and generates a SSH config file ready to use. 
+A very simple script that queries the AWS EC2 API with boto and generates a SSH config file ready to use.
 There are a few similar scripts around but I couldn't find one that would satisfy all my wish list:
 
 - Connect to all regions at once
@@ -33,8 +33,10 @@ Supported arguments:
 
 ```
 usage: aws-ssh-config.py [-h] [--default-user DEFAULT_USER] [--keydir KEYDIR]
-                         [--no-identities-only] [--prefix PREFIX] [--private]
-                         [--profile PROFILE] [--region]
+                         [--no-identities-only] [--postfix POSTFIX]
+                         [--prefix PREFIX] [--private] [--profile PROFILE]
+                         [--proxy PROXY] [--region]
+                         [--ssh-key-name SSH_KEY_NAME]
                          [--strict-hostkey-checking] [--tags TAGS]
                          [--user USER]
                          [--white-list-region WHITE_LIST_REGION [WHITE_LIST_REGION ...]]
@@ -47,11 +49,14 @@ optional arguments:
   --keydir KEYDIR       Location of private keys
   --no-identities-only  Do not include IdentitiesOnly=yes in ssh config; may
                         cause connection refused if using ssh-agent
+  --postfix POSTFIX     Specify a postfix to append to all host names
   --prefix PREFIX       Specify a prefix to prepend to all host names
   --private             Use private IP addresses (public are used by default)
   --profile PROFILE     Specify AWS credential profile to use
+  --proxy PROXY         Specify a bastion host for ProxyCommand
   --region              Append the region name at the end of the concatenation
-  --ssh-key-name        Override the ssh key to use
+  --ssh-key-name SSH_KEY_NAME
+                        Override the ssh key to use
   --strict-hostkey-checking
                         Do not include StrictHostKeyChecking=no in ssh config
   --tags TAGS           A comma-separated list of tag names to be considered
@@ -125,7 +130,7 @@ _complete_ssh_hosts ()
 }
 complete -F _complete_ssh_hosts ssh
 ```
-and run `gianluca@sid:~$ source .bash_profile` 
+and run `gianluca@sid:~$ source .bash_profile`
 
 It's possible to customize which tags one is interested in, as well as the order used for concatenation:
 
