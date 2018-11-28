@@ -65,6 +65,8 @@ def main():
     parser.add_argument('--prefix', default='', help='Specify a prefix to prepend to all host names')
     parser.add_argument('--private', action='store_true', help='Use private IP addresses (public are used by default)')
     parser.add_argument('--profile', help='Specify AWS credential profile to use')
+    parser.add_argument('--postfix', default='', help='Specify a postfix to append to all host names')
+    parser.add_argument('--proxy', default='', help='Specify a bastion host for ProxyCommand')
     parser.add_argument('--region', action='store_true', help='Append the region name at the end of the concatenation')
     parser.add_argument('--ssh-key-name', default='', help='Override the ssh key to use')
     parser.add_argument('--strict-hostkey-checking', action='store_true', help='Do not include StrictHostKeyChecking=no in ssh config')
@@ -155,7 +157,7 @@ def main():
                 counts_incremental[instance_id] += 1
                 instance_id += '-' + str(counts_incremental[instance_id])
 
-            hostid = args.prefix + instance_id
+            hostid = args.prefix + instance_id + args.postfix
             hostid = hostid.replace(' ', '_') # get rid of spaces
 
             if instance.id:
@@ -186,6 +188,8 @@ def main():
                 print('    IdentitiesOnly yes')
             if not args.strict_hostkey_checking:
                 print('    StrictHostKeyChecking no')
+            if args.proxy:
+                print('    ProxyCommand ssh ' + args.proxy + ' -W %h:%p')
             print('')
 
 
