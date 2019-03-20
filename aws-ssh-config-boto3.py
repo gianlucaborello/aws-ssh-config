@@ -24,7 +24,7 @@ AMI_IDS_TO_KEY = {
 }
 
 BLACKLISTED_REGIONS = [
-    
+
 ]
 
 def generate_id(instance, tags_filter, region):
@@ -142,13 +142,15 @@ def main():
                 if instance['Instances'][0]['PrivateIpAddress']:
                     ip_addr = instance['Instances'][0]['PrivateIpAddress']
             else:
-                if instance['Instances'][0]['PublicIpAddress']:
+                try:
                     ip_addr = instance['Instances'][0]['PublicIpAddress']
-                elif instance['Instances'][0]['PrivateIpAddress']:
-                    ip_addr = instance['Instances'][0]['PrivateIpAddress']
-                else:
-                    sys.stderr.write('Cannot lookup ip address for instance %s, skipped it.' % instance['Instances'][0]['InstanceId'])
-                    continue
+                except KeyError:
+                    try:
+                        ip_addr = instance['Instances'][0]['PrivateIpAddress']
+                    except KeyError:
+                        sys.stderr.write('Cannot lookup ip address for instance %s, skipped it.' % instance['Instances'][0]['InstanceId'])
+                        continue
+
 
             instance_id = generate_id(instance, args.tags, args.region)
 
