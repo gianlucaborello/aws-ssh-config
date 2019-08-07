@@ -33,7 +33,7 @@ def generate_id(instance, tags_filter, region):
 
     if tags_filter is not None:
         for tag in tags_filter.split(','):
-            for aws_tag in instance['Instances'][0]['Tags']:
+            for aws_tag in instance['Instances'][0].get('Tags', []):
                 value = aws_tag['Value']
                 if value:
                     if not instance_id:
@@ -41,7 +41,7 @@ def generate_id(instance, tags_filter, region):
                     else:
                         instance_id += '-' + value
     else:
-        for tag in instance['Instances'][0]['Tags']:
+        for tag in instance['Instances'][0].get('Tags', []):
             if not (tag['Key']).startswith('aws'):
                 if not instance_id:
                     instance_id = tag['Value']
@@ -148,7 +148,7 @@ def main():
             if instance['Instances'][0]['State']['Name'] != 'running':
                 continue
 
-            if instance['Instances'][0]['KeyName'] is None:
+            if instance['Instances'][0].get('KeyName', None) is None:
                 continue
 
             if instance['Instances'][0]['LaunchTime'] not in instances:
@@ -192,8 +192,7 @@ def main():
                             image_label = image[
                                 'Images'
                             ][0][
-                                'ImageId'] if image[
-                                    'Images'][0] is not None else instance[
+                                'ImageId'] if len(image['Images']) and image['Images'][0] is not None else instance[
                                         'Instances'][0]['ImageId']
                             sys.stderr.write(
                                 'Can\'t lookup user for AMI \''
