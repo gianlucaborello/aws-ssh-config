@@ -52,6 +52,7 @@ def generate_id(instance, tags_filter, region):
 def sshconf_host_entry(id, ip, instance, args, amis):
     print 'Host ' + id
     print '    HostName ' + ip
+    print '    ServerAliveInterval 600'
 
     try:
         if args.ssh_user:
