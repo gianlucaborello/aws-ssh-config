@@ -34,6 +34,8 @@ def generate_id(instance, tags_filter, region):
     if tags_filter is not None:
         for tag in tags_filter.split(','):
             for aws_tag in instance['Instances'][0].get('Tags', []):
+                if aws_tag['Key'] != tag:
+                    continue
                 value = aws_tag['Value']
                 if value:
                     if not instance_id:
