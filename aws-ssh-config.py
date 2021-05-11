@@ -43,7 +43,7 @@ def generate_id(instance, tags_filter, region):
                     else:
                         instance_id += '-' + value
     else:
-        for tag in instance['Instances'][0].get('Tags', []):
+        for tag in sorted(instance['Instances'][0].get('Tags', []), key=lambda tag: tag['Key']):
             if not (tag['Key']).startswith('aws'):
                 if not instance_id:
                     instance_id = tag['Value']
