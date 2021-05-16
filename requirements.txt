@@ -1,1 +1,1 @@
-boto
+boto3
